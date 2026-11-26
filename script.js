@@ -12,7 +12,6 @@ const questionTypeHint = document.getElementById('question-type-hint');
 const answersContainer = document.getElementById('answers-container');
 const answerBtn = document.getElementById('answer-btn');
 
-// Перемешивание массива (Алгоритм Фишера-Йетса)
 function shuffle(array) {
     let currentIndex = array.length, randomIndex;
     while (currentIndex != 0) {
@@ -24,13 +23,13 @@ function shuffle(array) {
 }
 
 function startTest() {
-    // Копируем вопросы и перемешиваем их
     currentQuestions = shuffle([...questions]);
     currentIndex = 0;
     userAnswers = [];
     totalMaxPoints = currentQuestions.reduce((sum, q) => sum + q.points, 0);
 
     startScreen.classList.remove('active');
+    resultScreen.classList.remove('active');
     testScreen.classList.add('active');
     
     renderCards();
@@ -45,7 +44,6 @@ function renderCards() {
         card.textContent = index + 1;
         
         if (index === currentIndex) card.classList.add('current');
-        // Если на вопрос уже ответили, закрашиваем карточку
         if (userAnswers[index] !== undefined) card.classList.add('done');
         
         cardsContainer.appendChild(card);
@@ -118,10 +116,8 @@ answerBtn.addEventListener('click', () => {
         selected.push(textVal);
     }
 
-    // Сохраняем ответ пользователя
     userAnswers[currentIndex] = selected;
     
-    // Переход к следующему вопросу или результатам
     if (currentIndex < currentQuestions.length - 1) {
         currentIndex++;
         loadQuestion();
@@ -135,27 +131,58 @@ function showResults() {
     resultScreen.classList.add('active');
 
     let earnedPoints = 0;
+    let mistakesCount = 0;
+    
+    const mistakesContainer = document.getElementById('mistakes-container');
+    const mistakesList = document.getElementById('mistakes-list');
+    
+    // Очищаем старые результаты при перезапуске
+    mistakesList.innerHTML = '';
 
-    // Подсчет баллов
+    // Проверяем каждый вопрос
     currentQuestions.forEach((q, index) => {
         const uAns = userAnswers[index] || [];
-        
+        let isCorrect = false;
+
+        // Логика проверки
         if (q.type === 'text') {
-            // Для текста проверяем, совпадает ли с любым из правильных вариантов (без учета регистра)
-            const isCorrect = q.correct.some(c => c.toLowerCase() === uAns[0]);
-            if (isCorrect) earnedPoints += q.points;
+            const userText = (uAns[0] || '').trim().toLowerCase();
+            isCorrect = q.correct.some(c => c.trim().toLowerCase() === userText);
         } else if (q.type === 'checkbox') {
-            // Для чекбоксов количество и сами варианты должны полностью совпасть
-            const isCorrect = q.correct.length === uAns.length && q.correct.every(c => uAns.includes(c));
-            if (isCorrect) earnedPoints += q.points;
+            isCorrect = q.correct.length === uAns.length && q.correct.every(c => uAns.includes(c));
         } else {
-            // Для радио
-            const isCorrect = q.correct[0] === uAns[0];
-            if (isCorrect) earnedPoints += q.points;
+            isCorrect = q.correct[0] === uAns[0];
+        }
+
+        if (isCorrect) {
+            earnedPoints += q.points;
+        } else {
+            mistakesCount++;
+            
+            // Создаем HTML-блок для ошибки
+            const item = document.createElement('div');
+            item.classList.add('mistake-item');
+            
+            let userAnswerText = uAns.length > 0 ? uAns.join(', ') : '<i>Нет ответа</i>';
+            let correctAnswerText = q.correct.join(', ');
+
+            item.innerHTML = `
+                <div class="mistake-question">${index + 1}. ${q.text}</div>
+                <div class="user-answer"><b>Ваш ответ:</b> ${userAnswerText}</div>
+                <div class="correct-answer"><b>Правильный ответ:</b> ${correctAnswerText}</div>
+            `;
+            mistakesList.appendChild(item);
         }
     });
 
-    // Высчитываем процент от максимального возможного балла
+    // Показываем блок ошибок, если они есть
+    if (mistakesCount > 0) {
+        mistakesContainer.style.display = 'block';
+    } else {
+        mistakesContainer.style.display = 'none';
+    }
+
+    // Подсчет процентов и оценок
     const percent = Math.round((earnedPoints / totalMaxPoints) * 100);
     let grade = 2;
 
@@ -168,14 +195,12 @@ function showResults() {
     const gradeEl = document.getElementById('result-grade');
     gradeEl.textContent = `Оценка: ${grade}`;
     
-    // Красим оценку в зависимости от результата
-    if (grade === 2) gradeEl.style.color = '#dc3545'; // красный
-    else if (grade === 3) gradeEl.style.color = '#ffc107'; // желтый
-    else if (grade === 4) gradeEl.style.color = '#17a2b8'; // голубой
-    else gradeEl.style.color = '#28a745'; // зеленый
+    if (grade === 2) gradeEl.style.color = '#dc3545';
+    else if (grade === 3) gradeEl.style.color = '#ffc107';
+    else if (grade === 4) gradeEl.style.color = '#17a2b8';
+    else gradeEl.style.color = '#28a745';
 }
 
-// Обработчики кнопок старта и рестарта
 document.getElementById('start-btn').addEventListener('click', startTest);
 document.getElementById('restart-btn').addEventListener('click', () => {
     resultScreen.classList.remove('active');
