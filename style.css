@@ -195,6 +195,7 @@ body {
     justify-content: center; 
     align-items: center; 
     text-align: center; 
+    padding: 20px;
 }
 
 #result-screen h1 {
@@ -210,4 +211,84 @@ body {
     font-size: 72px; 
     font-weight: bold; 
     margin-bottom: 40px; 
+}
+
+/* =========================================
+   АДАПТАЦИЯ ПОД МОБИЛЬНЫЕ ТЕЛЕФОНЫ (до 768px)
+   ========================================= */
+@media (max-width: 768px) {
+    /* Главный экран */
+    #start-screen h1 { font-size: 20px; }
+    .warning { font-size: 16px; margin-bottom: 30px; }
+    .main-btn { width: 100%; align-self: center; }
+
+    /* Перестраиваем макет теста с "рядом" на "колонку" */
+    #test-screen { 
+        flex-direction: column; 
+    }
+
+    /* Боковая панель становится верхней горизонтальной лентой */
+    .sidebar { 
+        width: 100%; 
+        max-height: 80px; 
+        padding: 10px 15px; 
+        border-right: none; 
+        border-bottom: 1px solid #ddd;
+        overflow-y: hidden; /* Убираем вертикальный скролл */
+    }
+    
+    .sidebar h3 { 
+        display: none; /* Прячем заголовок "Вопросы", чтобы сэкономить место */
+    }
+
+    .cards-grid { 
+        display: flex; /* Меняем сетку на строку */
+        overflow-x: auto; /* Включаем горизонтальный скролл */
+        gap: 8px; 
+        padding-bottom: 5px;
+        /* Прячем скроллбар для красоты */
+        scrollbar-width: none; 
+    }
+    .cards-grid::-webkit-scrollbar { 
+        display: none; 
+    }
+
+    .card { 
+        min-width: 30px; 
+        height: 30px; 
+        font-size: 12px;
+        flex-shrink: 0; /* Запрещаем карточкам сжиматься */
+    }
+
+    /* Контентная часть */
+    .content { 
+        padding: 15px; 
+    }
+    
+    #question-container { 
+        padding: 20px 15px; 
+    }
+    
+    #question-text { 
+        font-size: 18px; 
+    }
+    
+    .answer-label { 
+        padding: 12px; 
+        font-size: 15px;
+    }
+    
+    .text-input {
+        font-size: 16px;
+        padding: 12px;
+    }
+
+    .main-btn {
+        padding: 15px;
+        font-size: 16px;
+    }
+
+    /* Экран результатов */
+    #result-score { font-size: 20px; }
+    .grade { font-size: 56px; }
 }
