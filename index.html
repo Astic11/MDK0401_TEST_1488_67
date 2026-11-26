@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тестирование МДК 04.01</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Главный экран -->
+        <div id="start-screen" class="screen active">
+            <h1>Сайт создан для подготовки к тестированию на МДК 04.01</h1>
+            <p class="warning">Распространению не подлежит. Распространение запрещено.</p>
+            <button id="start-btn" class="main-btn">Начать тест</button>
+        </div>
+
+        <!-- Экран теста -->
+        <div id="test-screen" class="screen">
+            <aside class="sidebar">
+                <h3>Вопросы</h3>
+                <div id="cards-container" class="cards-grid"></div>
+            </aside>
+            <main class="content">
+                <div id="question-container">
+                    <h2 id="question-text"></h2>
+                    <div id="question-type-hint" class="hint"></div>
+                    <div id="answers-container" class="answers"></div>
+                    <button id="answer-btn" class="main-btn" disabled>Ответить</button>
+                </div>
+            </main>
+        </div>
+
+        <!-- Экран результатов -->
+        <div id="result-screen" class="screen">
+            <h1>Результаты теста</h1>
+            <p id="result-score"></p>
+            <p id="result-grade" class="grade"></p>
+            <button id="restart-btn" class="main-btn">Пройти заново</button>
+        </div>
+    </div>
+    
+    <script src="questions.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
